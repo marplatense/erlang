@@ -1,0 +1,12 @@
+Testing tests.to_decimal
+    >>> from tests import to_decimal
+    >>> to_decimal('')
+    >>> to_decimal(None)
+    >>> to_decimal('0.11111')
+    Decimal('0.11111')
+    >>> to_decimal(u'0.11111')
+    Decimal('0.11111')
+    >>> to_decimal('Kamehameha')
+    'Kamehameha'
+    >>> to_decimal(u'Kamehameha')
+    u'Kamehameha'
