@@ -1,4 +1,8 @@
-pyc
-swp
+*.pyc
+*.swp
 .coverage
+doc
+test_tableA_results
+test_tableE_a_results
+test_tableE_b_results
 

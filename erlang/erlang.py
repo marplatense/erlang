@@ -12,13 +12,28 @@ Bibliography:
     * Wikipedia entry for ErlangB (http://en.wikipedia.org/wiki/Erlang_B)  
 
 """
+from decimal import Decimal
 
 __all__ = ['erlang_b', 'extended_erlang_b', 'equivalent_random_theory',
            'engset', 'binomial', 'erlang_c']
 
 def erlang_b(servers, traffic):
-    """TODO: add doc"""
-    return NotImplemented
+    """Erlang-B is a formula for the blocking probability derived from the 
+    Erlang distribution to describe the probability of call loss on a group of
+    circuits.
+    Parameters:
+        servers: number of servers (lines)
+        traffic: offered traffic
+    returns:
+        probability of blocking
+    """
+    if servers <0 or traffic<0:
+        return Decimal(0)
+    s = Decimal(1)
+    for i in range(1, servers+1):
+        r = (traffic*s)/(i+(traffic*s))
+        s = r
+    return r
 
 def extended_erlang_b(servers, traffic, retry):
     """TODO: add doc"""
