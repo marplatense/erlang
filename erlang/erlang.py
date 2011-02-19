@@ -12,7 +12,7 @@ Bibliography:
     * Wikipedia entry for ErlangB (http://en.wikipedia.org/wiki/Erlang_B)  
 
 """
-from decimal import Decimal
+from decimal import Decimal, getcontext, ROUND_UP
 
 __all__ = ['erlang_b', 'extended_erlang_b', 'equivalent_random_theory',
            'engset', 'binomial', 'erlang_c']
@@ -25,12 +25,18 @@ def erlang_b(servers, traffic):
         servers: number of servers (lines)
         traffic: offered traffic
     returns:
-        probability of blocking
+        GoS: grade of service (blocking probability)
     """
-    if servers <0 or traffic<0:
+    if traffic <= 0:
         return Decimal(0)
+    elif servers <= 0:
+        return Decimal(1)
+    if isinstance(traffic, float):
+        traffic = int(traffic)
+    if isinstance(servers, float):
+        servers = int(servers)
     s = Decimal(1)
-    for i in range(1, servers+1):
+    for i in xrange(1, servers+1):
         r = (traffic*s)/(i+(traffic*s))
         s = r
     return r
