@@ -47,9 +47,8 @@ def test_C_float():
 
 def test_D_tableA():
     input = build_arrays('tests/TableA.csv')
-    # we might generate too many data and we need to inspect the results, so we
+    # we might generate too much data and we need to inspect the results, so we
     # better put it in a file
-    """
     result_f = open('tests/test_tableA_results', 'w')
     result_d = OrderedDict()
     ok___ = 0
@@ -59,12 +58,12 @@ def test_D_tableA():
             l = input.next()
             for k, v in l[1].items():
                 try:
-                    res = erlang_b(l[0], k)
+                    res = erlang_b(Decimal(l[0]), v)
                 except Exception, e:
                     res = e.args[0]
-                if res == v: ok___ += 1
+                if res.quantize(k) == k: ok___ += 1
                 else: wrong += 1
-                result_d[(l[0], k)] = "Expected output: %r, Got: %r" % (v, res)
+                result_d[(l[0], v)] = "Expected output: %r, Got: %r" % (k, res.quantize(k))
     except StopIteration:
         result_f.write("Ok results: %d\n" % ok___)
         result_f.write("Wrong results: %d\n" % wrong)
@@ -73,5 +72,4 @@ def test_D_tableA():
             result_f.write("%r, %r: %s\n" % (k[0], k[1], v))
         result_f.close()
     ok_(wrong==0, "There were errors, please check tests/test_tableA_results")
-    """
 
