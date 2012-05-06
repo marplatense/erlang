@@ -12,7 +12,7 @@ Bibliography:
     * Wikipedia entry for ErlangB (http://en.wikipedia.org/wiki/Erlang_B)
 
 """
-from decimal import Decimal, getcontext, ROUND_UP
+from decimal import Decimal
 
 __all__ = ['erlang_b', 'extended_erlang_b', 'equivalent_random_theory',
            'engset', 'binomial', 'erlang_c']
@@ -60,5 +60,3 @@ def binomial(servers, traffic, sources):
 def erlang_c(servers, traffic):
     """TODO: add doc"""
     return NotImplemented
-
-
