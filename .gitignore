@@ -7,3 +7,4 @@ test_tableE_a_results
 test_tableE_b_results
 Session.vim
 tests/test_Table_ExtErlangB_results
+build/*
