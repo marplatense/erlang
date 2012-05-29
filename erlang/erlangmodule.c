@@ -6,20 +6,33 @@ erlang_b(PyObject *self, PyObject *args)
     int idx;
     int servers, traffic;
     float s = 1.0, r = 0.0;
-    
+    static PyObject *module;
+    static PyObject *decimal = NULL;
+    static PyObject *result;
+    PyObject *tuple=PyTuple_New(1);
+
     if (!PyArg_ParseTuple(args, "ii", &servers, &traffic))
         return NULL;
-    if (servers <= 0) {
-        return Py_BuildValue("f", 0.0);
-    }
     if (traffic <= 0) {
-        return Py_BuildValue("f", 0.0);
+        r = (float)0.0;
     }
-    for (idx = 1; idx <= servers; idx++) {
-        r = (traffic*s)/(idx+(traffic*s));
-        s = r;
-    } 
-    return Py_BuildValue("f", r);
+    else if (servers <= 0) {
+        r = (float)1.0;
+    }
+    else {
+        for (idx = 1; idx <= servers; idx++) {
+            r = (traffic*s)/(idx+(traffic*s));
+            s = r;
+        }
+    }
+
+    // thanks
+    // http://src.gnu-darwin.org/ports/databases/py-sqlrelay/work/sqlrelay/src/api/python/CSQLRelay.C
+    module = PyImport_ImportModule("decimal");
+    decimal = PyObject_GetAttrString(module, "Decimal");
+    PyTuple_SetItem(tuple, 0, Py_BuildValue("f", r));
+    result = PyObject_CallObject(decimal,tuple);
+    return result;
 }
 
 static PyMethodDef ErlangMethods[] = {
