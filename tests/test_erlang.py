@@ -63,8 +63,10 @@ def test_D_erlangB():
                     res = erlang_b(Decimal(l[0]), v)
                 except Exception, e:
                     res = e.args[0]
-                if res.quantize(k) == k: ok___ += 1
-                else: wrong += 1
+                if res.quantize(k) == k:
+                    ok___ += 1
+                else:
+                    wrong += 1
                 result_d[(l[0], v)] = "Expected output: %r, Got: %r" % (k, res.quantize(k))
     except StopIteration:
         result_f.write("Ok results: %d\n" % ok___)
@@ -90,20 +92,19 @@ def test_E_extended_erlangB():
             l = input.next()
             for k, v in l[1].items():
                 try:
-                    res = extended_erlang_b(Decimal(l[0]), v, Decimal('.4'))
+                    res = erlang_b_ext(Decimal(l[0]), v, Decimal('.4'))
                 except Exception, e:
                     res = e.args[0]
                 if res.quantize(k) == k: ok___ += 1
                 else: wrong += 1
                 result_d[(l[0], v)] = "Expected output: %r, Got: %r" % (k, res.quantize(k))
     except StopIteration:
-        result_f.write("============ 40% retry ============")
+        result_f.write("============ 40% retry ============\n")
         result_f.write("Ok results: %d\n" % ok___)
         result_f.write("Wrong results: %d\n" % wrong)
         result_f.write("Ratio: %s\n" % (float(ok___)/float(ok___+wrong)*100))
         for k, v in result_d.items():
             result_f.write("%r, %r: %s\n" % (k[0], k[1], v))
-        result_f.close()
     global_wrong += wrong
     input = build_arrays('tests/Table_ExtErlangB_50retry.csv')
     result_d = OrderedDict()
@@ -114,14 +115,14 @@ def test_E_extended_erlangB():
             l = input.next()
             for k, v in l[1].items():
                 try:
-                    res = extended_erlang_b(Decimal(l[0]), v, Decimal('.5'))
+                    res = erlang_b_ext(Decimal(l[0]), v, Decimal('.5'))
                 except Exception, e:
                     res = e.args[0]
                 if res.quantize(k) == k: ok___ += 1
                 else: wrong += 1
                 result_d[(l[0], v)] = "Expected output: %r, Got: %r" % (k, res.quantize(k))
     except StopIteration:
-        result_f.write("============ 50% retry ============")
+        result_f.write("============ 50% retry ============\n")
         result_f.write("Ok results: %d\n" % ok___)
         result_f.write("Wrong results: %d\n" % wrong)
         result_f.write("Ratio: %s\n" % (float(ok___)/float(ok___+wrong)*100))
