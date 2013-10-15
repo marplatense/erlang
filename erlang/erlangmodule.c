@@ -4,14 +4,14 @@ static PyObject *
 erlang_b(PyObject *self, PyObject *args)
 {
     int idx;
-    int servers, traffic;
+    float servers, traffic;
     float s = 1.0, r = 0.0;
     static PyObject *module;
     static PyObject *decimal = NULL;
     static PyObject *result;
     PyObject *tuple=PyTuple_New(1);
 
-    if (!PyArg_ParseTuple(args, "ii", &servers, &traffic))
+    if (!PyArg_ParseTuple(args, "ff", &servers, &traffic))
         return NULL;
     if (traffic <= 0) {
         r = (float)0.0;
@@ -39,7 +39,7 @@ static PyObject *
 erlang_b_ext(PyObject *self, PyObject *args)
 {
     int idx;
-    int servers, traffic;
+    float servers, traffic;
     float retry;
     float s = 1.0, r = 0.0, t = 0.0;
     static PyObject *module;
@@ -47,7 +47,7 @@ erlang_b_ext(PyObject *self, PyObject *args)
     static PyObject *result;
     PyObject *tuple=PyTuple_New(1);
 
-    if (!PyArg_ParseTuple(args, "iif", &servers, &traffic, &retry))
+    if (!PyArg_ParseTuple(args, "fff", &servers, &traffic, &retry))
         return NULL;
     if (traffic <= 0) {
         r = (float)0.0;
@@ -73,6 +73,12 @@ erlang_b_ext(PyObject *self, PyObject *args)
     return result;
 }
 
+static PyObject *
+engset(PyObject *self, PyObject *args)
+{
+
+
+}
 static PyMethodDef ErlangMethods[] = {
     {"erlang_b",  erlang_b, METH_VARARGS, 
      "Erlang-B is a formula for the blocking probability derived from the \n" 
@@ -89,7 +95,16 @@ static PyMethodDef ErlangMethods[] = {
 
 };
 
+static struct PyModuleDef erlangmodule = {
+    PyModuleDef_HEAD_INIT,
+    "erlang",
+    NULL,
+    -1,
+    ErlangMethods
+};
+
 PyMODINIT_FUNC
-initerlang(void) {
-    Py_InitModule("erlang", ErlangMethods);
+PyInit_erlang(void) {
+    return PyModule_Create(&erlangmodule);
+    //Py_InitModule("erlang", ErlangMethods);
 }

@@ -8,5 +8,3 @@ Testing tests.to_decimal
     Decimal('0.11111')
     >>> to_decimal('Kamehameha')
     'Kamehameha'
-    >>> to_decimal(u'Kamehameha')
-    u'Kamehameha'
