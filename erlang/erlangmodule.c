@@ -1,5 +1,6 @@
 #include <Python.h>
 #include <limits.h>
+#include <math.h>
 
 static PyObject *
 cast_to_decimal(float value)
@@ -148,7 +149,7 @@ NBTrunks(float intensity, float blocking)
         r =  (float)0.0;
     }
     else {
-        for (idx = 1; idx <= SHRT_MAX; idx++) {
+        for (idx = ceilf(intensity); idx <= SHRT_MAX; idx++) {
             sngcount = idx;
             b = ErlangB(sngcount, intensity);
             if (b <= blocking) {
@@ -170,6 +171,41 @@ nb_trunks(PyObject *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "ff", &intensity, &blocking))
         return NULL;
     r = NBTrunks(intensity, blocking);
+    return cast_to_decimal(r);
+}
+
+static float
+NumberTrunks(float servers, float intensity)
+{
+
+    int idx = 1, sngcount;
+    float r = 0.0, b = 0.0;
+    if ((servers<0) || (intensity<0)) {
+        r =  (float)0.0;
+    }
+    else {
+        for (idx = ceilf(servers); idx <= SHRT_MAX; idx++) {
+            sngcount = idx;
+            b = ErlangB(sngcount, intensity);
+            if (b <= 0.001) {
+                break;
+            }
+        }
+    }
+    if (idx<SHRT_MAX) {
+        r = idx;
+    }
+    return r;
+}
+
+static PyObject *
+number_trunks(PyObject *self, PyObject *args)
+{
+    float intensity, servers;
+    float r = 0.0;
+    if (!PyArg_ParseTuple(args, "ff", &servers, &intensity))
+        return NULL;
+    r = NumberTrunks(servers, intensity);
     return cast_to_decimal(r);
 }
 
@@ -219,6 +255,14 @@ static PyMethodDef ErlangMethods[] = {
      " receive busy tone)\n\n"
      "Original version of this function Copyright © T&C Limited 2000, 2001\n"
      "This function has been supplied by Edwin Barendse"},
+    {"number_trunks", number_trunks, METH_VARARGS,
+     "This formula gives the maximum number of telephone trunks required to"
+     " handle the answered and queuing calls. (up to a maximum of 255)\n"
+     " Servers = Number of agents\n"
+     " Intensity = Arrival rate of calls / Completion rate of calls\n"
+     "   Arrival rate = the number of calls arriving per hour\n"
+     "   Completion rate = the number of calls completed per hour\n"
+     "Original version of this function Copyright © T&C Limited 1996, 1999, 2000"},
     {NULL, NULL, 0, NULL}
 
 };
