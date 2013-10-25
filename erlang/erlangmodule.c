@@ -84,27 +84,32 @@ erlang_b_ext(PyObject *self, PyObject *args)
     return cast_to_decimal(r);
 }
 
-static PyObject *
-engset(PyObject *self, PyObject *args)
+static float
+Engset(float servers, float events, float intensity)
 {
-
     int idx;
-    float servers, traffic;
-    float intensity;
     float s = 1.0, r = 0.0;
-
-    if (!PyArg_ParseTuple(args, "fff", &servers, &traffic, &intensity))
-        return NULL;
     if ((servers<0) || (intensity<0)) {
         r =  (float)0.0;
     }
     else {
         for (idx = 1; idx <= servers; idx++) {
-            r = (s*(idx/((traffic-idx)*intensity))) +1;
+            r = (s*(idx/((events-idx)*intensity))) +1;
             s = r;
         }
     }
+    return r;
+}
 
+static PyObject *
+engset(PyObject *self, PyObject *args)
+{
+    float servers, events, intensity;
+    float r = 0.0;
+
+    if (!PyArg_ParseTuple(args, "fff", &servers, &events, &intensity))
+        return NULL;
+    r = Engset(servers, events, intensity);
     return cast_to_decimal(r);
 }
 
@@ -112,8 +117,13 @@ static float
 ErlangC(float servers, float intensity)
 {
     float s =  0.0, r = 0.0;
-    s = ErlangB(servers, intensity);
-    r = s/(((intensity/servers)*s)+(1-(intensity/servers)));
+    if ((servers<0) || (intensity<0)) {
+        r =  (float)0.0;
+    }
+    else {
+        s = ErlangB(servers, intensity);
+        r = s/(((intensity/servers)*s)+(1-(intensity/servers)));
+    }
     return r;
 }
 
@@ -122,26 +132,18 @@ erlangc(PyObject *self, PyObject *args)
 {
     float servers, intensity;
     float r = 0.0;
+
     if (!PyArg_ParseTuple(args, "ff", &servers, &intensity))
         return NULL;
-    if ((servers<0) || (intensity<0)) {
-        r =  (float)0.0;
-    }
-    else {
-        r = ErlangC(servers, intensity);
-    }
+    r = ErlangC(servers, intensity);
     return cast_to_decimal(r);
 }
 
-static PyObject *
-nb_trunks(PyObject *self, PyObject *args)
+static float 
+NBTrunks(float intensity, float blocking)
 {
-    
     int idx = 1, sngcount;
-    float intensity, blocking;
     float r = 0.0, b = 0.0;
-    if (!PyArg_ParseTuple(args, "ff", &intensity, &blocking))
-        return NULL;
     if ((blocking<0) || (intensity<0)) {
         r =  (float)0.0;
     }
@@ -157,6 +159,17 @@ nb_trunks(PyObject *self, PyObject *args)
     if (idx<SHRT_MAX) {
         r = idx;
     }
+    return r;
+}
+
+static PyObject *
+nb_trunks(PyObject *self, PyObject *args)
+{
+    float intensity, blocking;
+    float r = 0.0;
+    if (!PyArg_ParseTuple(args, "ff", &intensity, &blocking))
+        return NULL;
+    r = NBTrunks(intensity, blocking);
     return cast_to_decimal(r);
 }
 
@@ -221,5 +234,4 @@ static struct PyModuleDef erlangmodule = {
 PyMODINIT_FUNC
 PyInit_erlang(void) {
     return PyModule_Create(&erlangmodule);
-    //Py_InitModule("erlang", ErlangMethods);
 }
